@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Dynamic Name to Cities Demo</title>
+		
+		<style>
+			body {
+				text-align: center;
+				margin-right: auto;
+				margin-left: auto;
+				color: #669421;
+			}
+			
+			p {
+				font-size: 12px;
+			}
+			
+			#wrapper {
+				margin-right: auto;
+				margin-left: auto;
+			}
+			
+			#results {
+				display: inline-block;
+				text-align: left;
+			}
+		</style>
+	</head>
+
+	<body>
+		<h3>Dynamic Name to Cites Demo<br /><p>This demo will take a name, query a database, and display a list of cities, states, and their respective populations based on the letters in the name.</p></h3>
+		<div>
+			<!-- <form action="php/name_to_cities_dynamic.php" method="post"> -->
+			<form name="write" onsubmit="return write_above(this);" method="post">
+				Please enter a name: <input type="text" name="name"><br / >
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+		<div id="wrapper">
+			<div id="results">
+			</div>
+		</div>
+		<script type = "text/javascript">
+			function write_above(form)
+			{
+				var input = document.forms.write.name.value;				
+				var param = "name=" + input;
+				var xmlhttp = new XMLHttpRequest();
+				var url = "php/name_to_cities_dynamic.php";
+				xmlhttp.onreadystatechange = function() {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						formatResults(xmlhttp.responseText);
+					}
+				}
+				xmlhttp.open("POST", url, true);
+				xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+				xmlhttp.send(param);
+				
+				function formatResults(newResults) {
+					var newJSON = JSON.parse(newResults);
+					var key;
+					var result = "";
+					for (var i = 0; i < newJSON.length; i++) {
+						for(key in newJSON[i]) {
+							result += "<span style='font-size: 24px; font-weight: bold; color: #0000FF;'>" + key + "</span>" + newJSON[i][key]['city'] + ", " + newJSON[i][key]['state'] + " - " + newJSON[i][key]['pop'] + " people<br />";
+						}
+					}
+						document.getElementById('results').innerHTML ="<br /><br />Original Name:  " + input + "<br /><br />" + result;
+				}
+				return false;
+			}
+		</script>
+	</body>
+</html>
